@@ -8,6 +8,7 @@ interface Contact {
 interface Message {
   sender: string;
   text: string;
+  timestamp: string;
 }
 
 interface ChatState {

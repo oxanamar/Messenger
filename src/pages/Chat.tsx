@@ -4,6 +4,28 @@ import { RootState } from "../app/store/store";
 import axios from "axios";
 import { addMessage } from "../features/chat/chatSlice";
 
+// ✅ Configure Green API for receiving messages
+const configureGreenAPI = async (
+  idInstance: string,
+  apiTokenInstance: string
+) => {
+  const url = `https://api.green-api.com/waInstance${idInstance}/setSettings/${apiTokenInstance}`;
+
+  const settingsData = {
+    webhookUrl: "", // ✅ Leave blank to use ReceiveNotification
+    outgoingWebhook: "yes",
+    stateWebhook: "yes",
+    incomingWebhook: "yes",
+  };
+
+  try {
+    const response = await axios.post(url, settingsData);
+    console.log("✅ Green API configured:", response.data);
+  } catch (error) {
+    console.error("❌ Error configuring Green API:", error);
+  }
+};
+
 const Chat = () => {
   const { idInstance, apiTokenInstance } = useSelector(
     (state: RootState) => state.auth
@@ -17,6 +39,7 @@ const Chat = () => {
   const dispatch = useDispatch();
   const [message, setMessage] = useState("");
 
+  // ✅ Send a message
   const sendMessage = async () => {
     console.log("Selected chat before sending message:", selectedChat);
 
@@ -39,59 +62,102 @@ const Chat = () => {
       dispatch(
         addMessage({
           contact: selectedChat,
-          message: { sender: "You", text: message },
+          message: {
+            sender: "You",
+            text: message,
+            timestamp: new Date().toLocaleTimeString(),
+          },
         })
       );
       setMessage("");
     } catch (error) {
-      console.error("Error sending message:", error);
+      console.error("❌ Error sending message:", error);
     }
   };
 
-  // Function to receive messages
+  // ✅ Receive messages
   const receiveMessages = async () => {
     const url = `https://api.green-api.com/waInstance${idInstance}/receiveNotification/${apiTokenInstance}`;
 
     try {
       const response = await axios.get(url);
-      if (response.data && response.data.body) {
-        const incomingMessage =
-          response.data.body.messageData?.textMessageData?.textMessage;
-        const senderNumber = response.data.body.senderData?.chatId?.replace(
-          "@c.us",
-          ""
-        );
 
-        if (incomingMessage && senderNumber === selectedChat) {
-          dispatch(
-            addMessage({
-              contact: selectedChat,
-              message: { sender: "Friend", text: incomingMessage },
-            })
-          );
-        }
-        // Delete notification after processing
-        if (response.data.receiptId) {
-          await deleteNotification(response.data.receiptId);
-        }
+      // ✅ Log full response
+      console.log("📥 FULL Green API Response:", response.data);
+
+      if (!response.data || !response.data.body) {
+        console.log("❌ No new messages received");
+        return;
+      }
+
+      // ✅ Log everything from webhook
+      console.log("🔍 Webhook Data:", response.data.body);
+
+      const incomingMessage =
+        response.data.body.messageData?.textMessageData?.textMessage;
+      const senderNumber = response.data.body.senderData?.chatId?.replace(
+        "@c.us",
+        ""
+      );
+
+      console.log("📩 Extracted Message:", incomingMessage);
+      console.log("📩 Sender Number:", senderNumber);
+
+      if (incomingMessage && senderNumber) {
+        dispatch(
+          addMessage({
+            contact: senderNumber,
+            message: {
+              sender: "Friend",
+              text: incomingMessage,
+              timestamp: new Date().toLocaleTimeString(),
+            },
+          })
+        );
+      }
+
+      // ✅ Delete notification after processing
+      if (response.data.receiptId) {
+        await deleteNotification(response.data.receiptId);
       }
     } catch (error) {
-      console.error("Error receiving message:", error);
+      console.error("❌ Error receiving message:", error);
     }
   };
 
+  // ✅ Delete processed messages from Green API
   const deleteNotification = async (receiptId: string) => {
+    if (!receiptId) {
+      console.warn("⚠️ No receiptId provided for deletion");
+      return;
+    }
+
     const url = `https://api.green-api.com/waInstance${idInstance}/deleteNotification/${apiTokenInstance}/${receiptId}`;
 
     try {
       await axios.delete(url);
+      console.log(`🗑️ Deleted notification with receiptId: ${receiptId}`);
     } catch (error) {
-      console.error("Error deleting notification:", error);
+      console.error("❌ Error deleting notification:", error);
     }
   };
 
+  // ✅ Configure Green API and start fetching messages
   useEffect(() => {
-    const interval = setInterval(receiveMessages, 5000);
+    if (idInstance && apiTokenInstance) {
+      configureGreenAPI(idInstance, apiTokenInstance);
+    }
+  }, [idInstance, apiTokenInstance]);
+
+  // ✅ Continuously check for new messages
+  useEffect(() => {
+    const fetchMessages = async () => {
+      await receiveMessages();
+    };
+
+    fetchMessages(); // ✅ Fetch immediately when chat is selected
+
+    const interval = setInterval(fetchMessages, 5000);
     return () => clearInterval(interval);
   }, [selectedChat]);
 
@@ -103,21 +169,50 @@ const Chat = () => {
           height: "400px",
           overflowY: "auto",
           borderBottom: "1px solid #ddd",
+          padding: "10px",
+          display: "flex",
+          flexDirection: "column",
         }}
       >
         {messages.map((msg, index) => (
-          <p key={index}>
+          <div
+            key={index}
+            style={{
+              alignSelf: msg.sender === "You" ? "flex-end" : "flex-start",
+              backgroundColor: msg.sender === "You" ? "#DCF8C6" : "#EAEAEA",
+              padding: "8px",
+              borderRadius: "10px",
+              margin: "5px",
+              maxWidth: "60%",
+              textAlign: "left",
+            }}
+          >
             <b>{msg.sender}:</b> {msg.text}
-          </p>
+            <div
+              style={{
+                fontSize: "0.75rem",
+                textAlign: "right",
+                color: "gray",
+                marginTop: "5px",
+              }}
+            >
+              {msg.timestamp}
+            </div>
+          </div>
         ))}
       </div>
-      <input
-        type="text"
-        placeholder="Type a message..."
-        value={message}
-        onChange={(e) => setMessage(e.target.value)}
-      />
-      <button onClick={sendMessage}>Send</button>
+      <div style={{ display: "flex", marginTop: "10px" }}>
+        <input
+          type="text"
+          placeholder="Type a message..."
+          value={message}
+          onChange={(e) => setMessage(e.target.value)}
+          style={{ flex: 1, padding: "8px" }}
+        />
+        <button onClick={sendMessage} style={{ marginLeft: "10px" }}>
+          Send
+        </button>
+      </div>
     </div>
   );
 };
