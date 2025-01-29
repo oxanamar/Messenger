@@ -12,7 +12,7 @@ const configureGreenAPI = async (
   const url = `https://api.green-api.com/waInstance${idInstance}/setSettings/${apiTokenInstance}`;
 
   const settingsData = {
-    webhookUrl: "", // ✅ Leave blank to use ReceiveNotification
+    webhookUrl: "",
     outgoingWebhook: "yes",
     stateWebhook: "yes",
     incomingWebhook: "yes",
@@ -30,6 +30,7 @@ const Chat = () => {
   const { idInstance, apiTokenInstance } = useSelector(
     (state: RootState) => state.auth
   );
+  const contacts = useSelector((state: RootState) => state.chat.contacts);
   const selectedChat = useSelector(
     (state: RootState) => state.chat.selectedChat ?? ""
   );
@@ -38,6 +39,35 @@ const Chat = () => {
   );
   const dispatch = useDispatch();
   const [message, setMessage] = useState("");
+  const [avatarUrl, setAvatarUrl] = useState("");
+
+  // ✅ Get Contact Name or Show Number
+  const contactInfo = contacts.find((c) => c.phoneNumber === selectedChat);
+  const contactName = contactInfo ? contactInfo.name : selectedChat;
+
+  // ✅ Fetch Avatar from WhatsApp using Green API
+  const fetchAvatar = async () => {
+    if (!selectedChat) return;
+
+    const url = `https://api.green-api.com/waInstance${idInstance}/getAvatar/${apiTokenInstance}`;
+    const data = { chatId: `${selectedChat}@c.us` };
+
+    try {
+      const response = await axios.post(url, data);
+      if (response.data.urlAvatar) {
+        setAvatarUrl(response.data.urlAvatar);
+      } else {
+        setAvatarUrl(""); // Fallback if no avatar found
+      }
+    } catch (error) {
+      console.error("❌ Error fetching avatar:", error);
+      setAvatarUrl(""); // Handle error by setting to empty
+    }
+  };
+
+  useEffect(() => {
+    fetchAvatar(); // Fetch avatar when chat is selected
+  }, [selectedChat]);
 
   // ✅ Send a message
   const sendMessage = async () => {
@@ -49,9 +79,8 @@ const Chat = () => {
       ? selectedChat
       : `${selectedChat}@c.us`;
 
-    console.log("Formatted chatId:", chatId);
-
     const url = `https://api.green-api.com/waInstance${idInstance}/sendMessage/${apiTokenInstance}`;
+
     const data = {
       chatId: chatId,
       message,
@@ -163,7 +192,28 @@ const Chat = () => {
 
   return (
     <div>
-      <h3>Chat with {selectedChat}</h3>
+      {/* ✅ Chat Header */}
+      <div
+        style={{
+          display: "flex",
+          alignItems: "center",
+          gap: "10px",
+          padding: "10px",
+          borderBottom: "1px solid #ddd",
+        }}
+      >
+        <img
+          src={avatarUrl || "https://via.placeholder.com/50"} // Fallback avatar
+          alt="Avatar"
+          style={{
+            width: "50px",
+            height: "50px",
+            borderRadius: "50%",
+            objectFit: "cover",
+          }}
+        />
+        <h3>{contactName}</h3>
+      </div>
       <div
         style={{
           height: "400px",
