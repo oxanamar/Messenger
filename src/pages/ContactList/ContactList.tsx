@@ -1,12 +1,14 @@
 import { useSelector, useDispatch } from "react-redux";
-import { RootState } from "../app/store/store";
-import { addContact, selectChat } from "../features/chat/chatSlice";
+import { RootState } from "../../app/store/store";
+import { addContact, selectChat } from "../../features/chat/chatSlice";
 import { useState } from "react";
-import { clearAuth } from "../features/auth/authSlice";
+import { clearAuth } from "../../features/auth/authSlice";
 import { useNavigate } from "react-router-dom";
+import defaultAvatar from "../../shared/assets/defaultavatar.webp";
 
 const ContactList = () => {
   const contacts = useSelector((state: RootState) => state.chat.contacts);
+
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
@@ -16,10 +18,10 @@ const ContactList = () => {
 
   // ✅ Logout function
   const handleLogout = () => {
-    dispatch(clearAuth()); // Clear Redux authentication state
+    dispatch(clearAuth());
     localStorage.removeItem("idInstance");
     localStorage.removeItem("apiTokenInstance");
-    navigate("/"); // Redirect to login page
+    navigate("/");
   };
 
   const handleAddContact = () => {
@@ -36,7 +38,7 @@ const ContactList = () => {
 
   return (
     <div>
-      {/* Contacts Header with Add Button */}
+      {/* Contacts Header */}
       <div
         style={{
           display: "flex",
@@ -47,13 +49,8 @@ const ContactList = () => {
         }}
       >
         <h3>Contacts</h3>
-
-        {/* ✅ Buttons Wrapper */}
         <div style={{ display: "flex", gap: "10px" }}>
-          {/* ➕ Add Contact Button */}
           <button onClick={() => setShowModal(true)}>➕</button>
-
-          {/* 🚪 Logout Button */}
           <button
             onClick={handleLogout}
             style={{
@@ -75,16 +72,26 @@ const ContactList = () => {
         <div
           key={contact.phoneNumber}
           style={{
+            display: "flex",
+            alignItems: "center",
+            gap: "10px",
             padding: "10px",
             cursor: "pointer",
             borderBottom: "1px solid #ddd",
           }}
-          onClick={() => {
-            console.log(`Selected chat: ${contact.phoneNumber}`);
-            dispatch(selectChat(contact.phoneNumber));
-          }}
+          onClick={() => dispatch(selectChat(contact.phoneNumber))}
         >
-          {contact.name} ({contact.phoneNumber})
+          <img
+            src={defaultAvatar}
+            alt="Avatar"
+            style={{
+              width: "40px",
+              height: "40px",
+              borderRadius: "50%",
+              objectFit: "cover",
+            }}
+          />
+          <span>{contact.name}</span>
         </div>
       ))}
 

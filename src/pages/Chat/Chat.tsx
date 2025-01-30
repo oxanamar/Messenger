@@ -1,8 +1,9 @@
 import { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { RootState } from "../app/store/store";
+import { RootState } from "../../app/store/store";
 import axios from "axios";
-import { addMessage } from "../features/chat/chatSlice";
+import { addMessage } from "../../features/chat/chatSlice";
+import defaultAvatar from "../../shared/assets/defaultavatar.webp";
 
 // ✅ Configure Green API for receiving messages
 const configureGreenAPI = async (
@@ -39,35 +40,10 @@ const Chat = () => {
   );
   const dispatch = useDispatch();
   const [message, setMessage] = useState("");
-  const [avatarUrl, setAvatarUrl] = useState("");
 
   // ✅ Get Contact Name or Show Number
   const contactInfo = contacts.find((c) => c.phoneNumber === selectedChat);
   const contactName = contactInfo ? contactInfo.name : selectedChat;
-
-  // ✅ Fetch Avatar from WhatsApp using Green API
-  const fetchAvatar = async () => {
-    if (!selectedChat) return;
-
-    const url = `https://api.green-api.com/waInstance${idInstance}/getAvatar/${apiTokenInstance}`;
-    const data = { chatId: `${selectedChat}@c.us` };
-
-    try {
-      const response = await axios.post(url, data);
-      if (response.data.urlAvatar) {
-        setAvatarUrl(response.data.urlAvatar);
-      } else {
-        setAvatarUrl(""); // Fallback if no avatar found
-      }
-    } catch (error) {
-      console.error("❌ Error fetching avatar:", error);
-      setAvatarUrl(""); // Handle error by setting to empty
-    }
-  };
-
-  useEffect(() => {
-    fetchAvatar(); // Fetch avatar when chat is selected
-  }, [selectedChat]);
 
   // ✅ Send a message
   const sendMessage = async () => {
@@ -110,35 +86,50 @@ const Chat = () => {
 
     try {
       const response = await axios.get(url);
-
-      // ✅ Log full response
-      console.log("📥 FULL Green API Response:", response.data);
+      console.log("📥 FULL Green API Response:", response.data); // Debugging log
 
       if (!response.data || !response.data.body) {
         console.log("❌ No new messages received");
         return;
       }
 
-      // ✅ Log everything from webhook
-      console.log("🔍 Webhook Data:", response.data.body);
-
-      const incomingMessage =
-        response.data.body.messageData?.textMessageData?.textMessage;
+      // ✅ Extract message data correctly
+      const messageData = response.data.body.messageData;
+      const textMessage = messageData?.textMessageData?.textMessage;
       const senderNumber = response.data.body.senderData?.chatId?.replace(
         "@c.us",
         ""
       );
 
-      console.log("📩 Extracted Message:", incomingMessage);
+      console.log("📩 Extracted Message:", textMessage);
       console.log("📩 Sender Number:", senderNumber);
 
-      if (incomingMessage && senderNumber) {
+      // ✅ Ignore messages from group chats (`@g.us`)
+      if (senderNumber.includes("@g.us")) {
+        console.log(`🚫 Ignored group message from: ${senderNumber}`);
+        return;
+      }
+
+      // ✅ Extract clean phone number (remove "@c.us")
+      const senderPhoneNumber = senderNumber.replace("@c.us", "");
+
+      // ✅ Filter: Only allow messages from saved contacts
+      const savedContacts = contacts.map((contact) => contact.phoneNumber);
+      if (!savedContacts.includes(senderPhoneNumber)) {
+        console.log(
+          `🚫 Ignored message from unknown sender: ${senderPhoneNumber}`
+        );
+        return;
+      }
+
+      // ✅ If the message is valid, store it in Redux
+      if (textMessage && senderPhoneNumber) {
         dispatch(
           addMessage({
-            contact: senderNumber,
+            contact: senderPhoneNumber,
             message: {
               sender: "Friend",
-              text: incomingMessage,
+              text: textMessage,
               timestamp: new Date().toLocaleTimeString(),
             },
           })
@@ -203,7 +194,7 @@ const Chat = () => {
         }}
       >
         <img
-          src={avatarUrl || "https://via.placeholder.com/50"} // Fallback avatar
+          src={defaultAvatar} // Fallback avatar
           alt="Avatar"
           style={{
             width: "50px",

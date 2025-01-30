@@ -1,7 +1,7 @@
-import ContactList from "./ContactList";
-import Chat from "./Chat";
+import ContactList from "../../pages/ContactList/ContactList";
+import Chat from "../../pages/Chat/Chat";
 import { useSelector } from "react-redux";
-import { RootState } from "../app/store/store";
+import { RootState } from "../../app/store/store";
 
 const Messenger = () => {
   const selectedChat = useSelector(
