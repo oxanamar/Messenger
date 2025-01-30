@@ -1,10 +1,11 @@
 import { useSelector, useDispatch } from "react-redux";
 import { RootState } from "../../app/store/store";
 import { addContact, selectChat } from "../../features/chat/chatSlice";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { clearAuth } from "../../features/auth/authSlice";
 import { useNavigate } from "react-router-dom";
 import defaultAvatar from "../../shared/assets/defaultavatar.webp";
+import s from "./ContactList.module.scss";
 
 const ContactList = () => {
   const contacts = useSelector((state: RootState) => state.chat.contacts);
@@ -13,8 +14,10 @@ const ContactList = () => {
   const navigate = useNavigate();
 
   const [showModal, setShowModal] = useState(false);
+  const [showMenu, setShowMenu] = useState(false);
   const [name, setName] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
+  const menuRef = useRef<HTMLDivElement | null>(null);
 
   // ✅ Logout function
   const handleLogout = () => {
@@ -36,105 +39,83 @@ const ContactList = () => {
     setShowModal(false);
   };
 
+  // ✅ Close menu when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
+        setShowMenu(false);
+      }
+    };
+
+    if (showMenu) {
+      document.addEventListener("mousedown", handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [showMenu]);
+
   return (
-    <div>
+    <div className={s.container}>
       {/* Contacts Header */}
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-          paddingBottom: "10px",
-          borderBottom: "1px solid #ddd",
-        }}
-      >
-        <h3>Contacts</h3>
-        <div style={{ display: "flex", gap: "10px" }}>
+      <div className={s.header}>
+        <h3>Chats</h3>
+        <div className={s.menu}>
           <button onClick={() => setShowModal(true)}>➕</button>
+
+          {/* Three-dot menu */}
           <button
-            onClick={handleLogout}
-            style={{
-              backgroundColor: "red",
-              color: "white",
-              border: "none",
-              borderRadius: "5px",
-              padding: "5px 10px",
-              cursor: "pointer",
-            }}
+            onClick={() => setShowMenu((prev) => !prev)}
+            className={s.menuButton}
           >
-            Logout
+            ⋮
           </button>
+
+          {/* Dropdown Menu */}
+          {showMenu && (
+            <div ref={menuRef} className={s.menuDropdown}>
+              <button onClick={handleLogout} className={s.logoutButton}>
+                Logout
+              </button>
+            </div>
+          )}
         </div>
       </div>
 
       {/* Contact List */}
-      {contacts.map((contact) => (
-        <div
-          key={contact.phoneNumber}
-          style={{
-            display: "flex",
-            alignItems: "center",
-            gap: "10px",
-            padding: "10px",
-            cursor: "pointer",
-            borderBottom: "1px solid #ddd",
-          }}
-          onClick={() => dispatch(selectChat(contact.phoneNumber))}
-        >
-          <img
-            src={defaultAvatar}
-            alt="Avatar"
-            style={{
-              width: "40px",
-              height: "40px",
-              borderRadius: "50%",
-              objectFit: "cover",
-            }}
-          />
-          <span>{contact.name}</span>
-        </div>
-      ))}
+      <div className={s.contactList}>
+        {contacts.map((contact) => (
+          <div
+            key={contact.phoneNumber}
+            className={s.contactItem}
+            onClick={() => dispatch(selectChat(contact.phoneNumber))}
+          >
+            <img src={defaultAvatar} alt="Avatar" className={s.avatar} />
+            <span>{contact.name}</span>
+          </div>
+        ))}
+      </div>
 
       {/* Add Contact Modal */}
       {showModal && (
-        <div
-          style={{
-            position: "fixed",
-            top: "50%",
-            left: "50%",
-            transform: "translate(-50%, -50%)",
-            backgroundColor: "white",
-            padding: "20px",
-            borderRadius: "8px",
-            boxShadow: "0px 4px 6px rgba(0,0,0,0.1)",
-          }}
-        >
+        <div className={s.modal}>
           <h3>Add Contact</h3>
           <input
             type="text"
             placeholder="Name"
             value={name}
             onChange={(e) => setName(e.target.value)}
-            style={{
-              display: "block",
-              marginBottom: "10px",
-              padding: "5px",
-              width: "100%",
-            }}
+            className={s.input}
           />
           <input
             type="text"
             placeholder="Phone Number"
             value={phoneNumber}
             onChange={(e) => setPhoneNumber(e.target.value)}
-            style={{
-              display: "block",
-              marginBottom: "10px",
-              padding: "5px",
-              width: "100%",
-            }}
+            className={s.input}
           />
-          <button onClick={handleAddContact} style={{ marginRight: "10px" }}>
+          <button onClick={handleAddContact} className={s.saveButton}>
             Save
           </button>
           <button onClick={() => setShowModal(false)}>Cancel</button>

@@ -4,6 +4,7 @@ import { RootState } from "../../app/store/store";
 import axios from "axios";
 import { addMessage } from "../../features/chat/chatSlice";
 import defaultAvatar from "../../shared/assets/defaultavatar.webp";
+import s from "./Chat.module.scss";
 
 // ✅ Configure Green API for receiving messages
 const configureGreenAPI = async (
@@ -70,7 +71,10 @@ const Chat = () => {
           message: {
             sender: "You",
             text: message,
-            timestamp: new Date().toLocaleTimeString(),
+            timestamp: new Date().toLocaleTimeString([], {
+              hour: "2-digit",
+              minute: "2-digit",
+            }),
           },
         })
       );
@@ -104,33 +108,21 @@ const Chat = () => {
       console.log("📩 Extracted Message:", textMessage);
       console.log("📩 Sender Number:", senderNumber);
 
-      // ✅ Ignore messages from group chats (`@g.us`)
-      if (senderNumber.includes("@g.us")) {
-        console.log(`🚫 Ignored group message from: ${senderNumber}`);
-        return;
-      }
+      // ✅ Determine if the message is sent by the current user (you) or received
+      const isSentByMe = senderNumber === idInstance;
 
-      // ✅ Extract clean phone number (remove "@c.us")
-      const senderPhoneNumber = senderNumber.replace("@c.us", "");
-
-      // ✅ Filter: Only allow messages from saved contacts
-      const savedContacts = contacts.map((contact) => contact.phoneNumber);
-      if (!savedContacts.includes(senderPhoneNumber)) {
-        console.log(
-          `🚫 Ignored message from unknown sender: ${senderPhoneNumber}`
-        );
-        return;
-      }
-
-      // ✅ If the message is valid, store it in Redux
-      if (textMessage && senderPhoneNumber) {
+      if (textMessage && senderNumber) {
         dispatch(
           addMessage({
-            contact: senderPhoneNumber,
+            contact:
+              senderNumber === selectedChat ? selectedChat : senderNumber,
             message: {
-              sender: "Friend",
+              sender: isSentByMe ? "You" : "Friend",
               text: textMessage,
-              timestamp: new Date().toLocaleTimeString(),
+              timestamp: new Date().toLocaleTimeString([], {
+                hour: "2-digit",
+                minute: "2-digit",
+              }),
             },
           })
         );
@@ -177,82 +169,39 @@ const Chat = () => {
 
     fetchMessages(); // ✅ Fetch immediately when chat is selected
 
-    const interval = setInterval(fetchMessages, 5000);
+    const interval = setInterval(fetchMessages, 1000);
     return () => clearInterval(interval);
   }, [selectedChat]);
 
   return (
-    <div>
-      {/* ✅ Chat Header */}
-      <div
-        style={{
-          display: "flex",
-          alignItems: "center",
-          gap: "10px",
-          padding: "10px",
-          borderBottom: "1px solid #ddd",
-        }}
-      >
-        <img
-          src={defaultAvatar} // Fallback avatar
-          alt="Avatar"
-          style={{
-            width: "50px",
-            height: "50px",
-            borderRadius: "50%",
-            objectFit: "cover",
-          }}
-        />
+    <div className={s.chatContainer}>
+      <div className={s.chatHeader}>
+        <img src={defaultAvatar} alt="Avatar" />
         <h3>{contactName}</h3>
       </div>
-      <div
-        style={{
-          height: "400px",
-          overflowY: "auto",
-          borderBottom: "1px solid #ddd",
-          padding: "10px",
-          display: "flex",
-          flexDirection: "column",
-        }}
-      >
+
+      <div className={s.chatMessages}>
         {messages.map((msg, index) => (
           <div
             key={index}
-            style={{
-              alignSelf: msg.sender === "You" ? "flex-end" : "flex-start",
-              backgroundColor: msg.sender === "You" ? "#DCF8C6" : "#EAEAEA",
-              padding: "8px",
-              borderRadius: "10px",
-              margin: "5px",
-              maxWidth: "60%",
-              textAlign: "left",
-            }}
+            className={`${s.messageBubble} ${
+              msg.sender === "You" ? s.sentMessage : s.receivedMessage
+            }`}
           >
-            <b>{msg.sender}:</b> {msg.text}
-            <div
-              style={{
-                fontSize: "0.75rem",
-                textAlign: "right",
-                color: "gray",
-                marginTop: "5px",
-              }}
-            >
-              {msg.timestamp}
-            </div>
+            {msg.text}
+            <div className={s.messageTimestamp}>{msg.timestamp}</div>
           </div>
         ))}
       </div>
-      <div style={{ display: "flex", marginTop: "10px" }}>
+
+      <div className={s.chatInput}>
         <input
           type="text"
           placeholder="Type a message..."
           value={message}
           onChange={(e) => setMessage(e.target.value)}
-          style={{ flex: 1, padding: "8px" }}
         />
-        <button onClick={sendMessage} style={{ marginLeft: "10px" }}>
-          Send
-        </button>
+        <button onClick={sendMessage}>Send</button>
       </div>
     </div>
   );
