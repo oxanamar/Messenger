@@ -46,6 +46,14 @@ const Chat = () => {
   const contactInfo = contacts.find((c) => c.phoneNumber === selectedChat);
   const contactName = contactInfo ? contactInfo.name : selectedChat;
 
+  // ✅ Send message when "Enter" is pressed
+  const handleKeyPress = (event: React.KeyboardEvent<HTMLInputElement>) => {
+    if (event.key === "Enter") {
+      event.preventDefault(); // ✅ Prevents adding a newline
+      sendMessage();
+    }
+  };
+
   // ✅ Send a message
   const sendMessage = async () => {
     console.log("Selected chat before sending message:", selectedChat);
@@ -169,7 +177,7 @@ const Chat = () => {
 
     fetchMessages(); // ✅ Fetch immediately when chat is selected
 
-    const interval = setInterval(fetchMessages, 1000);
+    const interval = setInterval(fetchMessages, 5000);
     return () => clearInterval(interval);
   }, [selectedChat]);
 
@@ -200,6 +208,7 @@ const Chat = () => {
           placeholder="Type a message..."
           value={message}
           onChange={(e) => setMessage(e.target.value)}
+          onKeyDown={handleKeyPress}
         />
         <button onClick={sendMessage}>Send</button>
       </div>
