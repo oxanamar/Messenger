@@ -5,6 +5,7 @@ import axios from "axios";
 import { addMessage } from "../../features/chat/chatSlice";
 import defaultAvatar from "../../shared/assets/defaultavatar.webp";
 import s from "./Chat.module.scss";
+import { FaPlus, FaMicrophone } from "react-icons/fa";
 
 // ✅ Configure Green API for receiving messages
 const configureGreenAPI = async (
@@ -203,6 +204,7 @@ const Chat = () => {
       </div>
 
       <div className={s.chatInput}>
+        <FaPlus className={s.icon} />
         <input
           type="text"
           placeholder="Type a message..."
@@ -210,7 +212,7 @@ const Chat = () => {
           onChange={(e) => setMessage(e.target.value)}
           onKeyDown={handleKeyPress}
         />
-        <button onClick={sendMessage}>Send</button>
+        <FaMicrophone className={s.icon} />
       </div>
     </div>
   );
