@@ -5,7 +5,13 @@ import { useEffect, useRef, useState } from "react";
 import { clearAuth } from "../../features/auth/authSlice";
 import { useNavigate } from "react-router-dom";
 import defaultAvatar from "../../shared/assets/defaultavatar.webp";
+import { FaSearch } from "react-icons/fa";
 import s from "./ContactList.module.scss";
+
+interface Contact {
+  name: string;
+  phoneNumber: string;
+}
 
 const ContactList = () => {
   const contacts = useSelector((state: RootState) => state.chat.contacts);
@@ -13,13 +19,23 @@ const ContactList = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
+  const [searchTerm, setSearchTerm] = useState("");
+  const [filteredContacts, setFilteredContacts] = useState<Contact[]>(contacts);
   const [showModal, setShowModal] = useState(false);
   const [showMenu, setShowMenu] = useState(false);
   const [name, setName] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
   const menuRef = useRef<HTMLDivElement | null>(null);
 
-  // ✅ Logout function
+  useEffect(() => {
+    setFilteredContacts(
+      contacts.filter((contact) =>
+        contact.name.toLowerCase().includes(searchTerm.toLowerCase())
+      )
+    );
+  }, [searchTerm, contacts]);
+
+  // Logout function
   const handleLogout = () => {
     dispatch(clearAuth());
     localStorage.removeItem("idInstance");
@@ -83,9 +99,21 @@ const ContactList = () => {
         </div>
       </div>
 
+      {/* Search Bar */}
+      <div className={s.searchBar}>
+        <FaSearch className={s.searchIcon} />
+        <input
+          type="text"
+          placeholder="Search"
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          className={s.searchInput}
+        />
+      </div>
+
       {/* Contact List */}
       <div className={s.contactList}>
-        {contacts.map((contact) => (
+        {filteredContacts.map((contact) => (
           <div
             key={contact.phoneNumber}
             className={s.contactItem}
