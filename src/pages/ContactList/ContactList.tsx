@@ -5,7 +5,7 @@ import { useEffect, useRef, useState } from "react";
 import { clearAuth } from "../../features/auth/authSlice";
 import { useNavigate } from "react-router-dom";
 import defaultAvatar from "../../shared/assets/defaultavatar.webp";
-import { FaSearch } from "react-icons/fa";
+import { FaSearch, FaEllipsisV, FaPlus } from "react-icons/fa";
 import s from "./ContactList.module.scss";
 
 interface Contact {
@@ -78,15 +78,12 @@ const ContactList = () => {
       <div className={s.header}>
         <h3>Chats</h3>
         <div className={s.menu}>
-          <button onClick={() => setShowModal(true)}>➕</button>
+          <FaPlus className={s.icon} onClick={() => setShowModal(true)} />
 
-          {/* Three-dot menu */}
-          <button
+          <FaEllipsisV
+            className={s.icon}
             onClick={() => setShowMenu((prev) => !prev)}
-            className={s.menuButton}
-          >
-            ⋮
-          </button>
+          />
 
           {/* Dropdown Menu */}
           {showMenu && (

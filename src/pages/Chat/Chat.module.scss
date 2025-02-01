@@ -14,6 +14,7 @@
   padding: 10px;
   border: none;
   background-color: var(--color-gray);
+  justify-content: space-between;
 }
 
 .chatHeader img {
@@ -21,6 +22,18 @@
   height: 50px;
   border-radius: 50%;
   object-fit: cover;
+}
+
+.userInfo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.chatHeaderIcons {
+  display: flex;
+  align-items: center;
+  gap: 30px;
 }
 
 .chatMessages {
@@ -75,7 +88,7 @@
 }
 
 .icon {
-  font-size: 1.5rem;
+  font-size: 1.3rem;
   color: rgb(84, 101, 111);
   cursor: pointer;
 }

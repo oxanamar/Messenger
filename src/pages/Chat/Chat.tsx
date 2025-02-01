@@ -5,7 +5,7 @@ import axios from "axios";
 import { addMessage } from "../../features/chat/chatSlice";
 import defaultAvatar from "../../shared/assets/defaultavatar.webp";
 import s from "./Chat.module.scss";
-import { FaPlus, FaMicrophone } from "react-icons/fa";
+import { FaPlus, FaMicrophone, FaSearch, FaEllipsisV } from "react-icons/fa";
 
 // ✅ Configure Green API for receiving messages
 const configureGreenAPI = async (
@@ -185,8 +185,15 @@ const Chat = () => {
   return (
     <div className={s.chatContainer}>
       <div className={s.chatHeader}>
-        <img src={defaultAvatar} alt="Avatar" />
-        <h3>{contactName}</h3>
+        <div className={s.userInfo}>
+          <img src={defaultAvatar} alt="Avatar" />
+          <h3>{contactName}</h3>
+        </div>
+
+        <div className={s.chatHeaderIcons}>
+          <FaSearch className={s.icon} />
+          <FaEllipsisV className={s.icon} />
+        </div>
       </div>
 
       <div className={s.chatMessages}>
