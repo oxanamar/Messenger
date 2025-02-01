@@ -7,7 +7,7 @@ interface ModalProps {
   onClose: () => void;
   title: string;
   children: React.ReactNode;
-  hideCloseButton?: boolean;
+  closable?: boolean;
 }
 
 const Modal: React.FC<ModalProps> = ({
@@ -15,17 +15,15 @@ const Modal: React.FC<ModalProps> = ({
   onClose,
   title,
   children,
-  hideCloseButton,
+  closable = true,
 }) => {
   if (!isOpen) return null;
 
   return (
-    <div className={s.modalOverlay} onClick={onClose}>
+    <div className={s.modalOverlay} onClick={closable ? onClose : undefined}>
       <div className={s.modal} onClick={(e) => e.stopPropagation()}>
-        {!hideCloseButton && (
-          <FaTimes className={s.modalClose} onClick={onClose} />
-        )}
-        <h3 className={s.modalTitle}>{title}</h3>
+        {closable && <FaTimes className={s.modalClose} onClick={onClose} />}
+        <h3>{title}</h3>
         {children}
       </div>
     </div>
