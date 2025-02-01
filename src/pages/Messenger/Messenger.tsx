@@ -2,6 +2,8 @@ import ContactList from "../../pages/ContactList/ContactList";
 import Chat from "../../pages/Chat/Chat";
 import { useSelector } from "react-redux";
 import { RootState } from "../../app/store/store";
+import s from "./Messenger.module.scss";
+import Sidebar from "../Sidebar/Sidebar";
 
 const Messenger = () => {
   const selectedChat = useSelector(
@@ -9,14 +11,14 @@ const Messenger = () => {
   );
 
   return (
-    <div style={{ display: "flex", height: "100vh" }}>
-      {/* Left Sidebar - Contact List */}
-      <div style={{ width: "30%", borderRight: "1px solid #ccc" }}>
+    <div className={s.messengerContainer}>
+      <Sidebar />
+
+      <div className={s.contactList}>
         <ContactList />
       </div>
 
-      {/* Right Chat Area */}
-      <div style={{ flex: 1 }}>
+      <div className={s.chatArea}>
         {selectedChat ? <Chat /> : <p>Select a contact to start chatting</p>}
       </div>
     </div>
