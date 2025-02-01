@@ -7,6 +7,7 @@ import { useNavigate } from "react-router-dom";
 import defaultAvatar from "../../shared/assets/defaultavatar.webp";
 import { FaSearch, FaEllipsisV, FaPlus } from "react-icons/fa";
 import s from "./ContactList.module.scss";
+import Modal from "../../shared/Modal/Modal";
 
 interface Contact {
   name: string;
@@ -89,7 +90,7 @@ const ContactList = () => {
           {showMenu && (
             <div ref={menuRef} className={s.menuDropdown}>
               <button onClick={handleLogout} className={s.logoutButton}>
-                Logout
+                Log out
               </button>
             </div>
           )}
@@ -123,29 +124,37 @@ const ContactList = () => {
       </div>
 
       {/* Add Contact Modal */}
-      {showModal && (
-        <div className={s.modal}>
-          <h3>Add Contact</h3>
-          <input
-            type="text"
-            placeholder="Name"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            className={s.input}
-          />
-          <input
-            type="text"
-            placeholder="Phone Number"
-            value={phoneNumber}
-            onChange={(e) => setPhoneNumber(e.target.value)}
-            className={s.input}
-          />
-          <button onClick={handleAddContact} className={s.saveButton}>
-            Save
+      <Modal
+        isOpen={showModal}
+        onClose={() => setShowModal(false)}
+        title="Add Contact"
+      >
+        <input
+          type="text"
+          placeholder="Name"
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+          className={s.input}
+        />
+        <input
+          type="text"
+          placeholder="Phone Number"
+          value={phoneNumber}
+          onChange={(e) => setPhoneNumber(e.target.value)}
+          className={s.input}
+        />
+        <div className={s.modalButtons}>
+          <button onClick={handleAddContact} className={s.createButton}>
+            Create
           </button>
-          <button onClick={() => setShowModal(false)}>Cancel</button>
+          <button
+            onClick={() => setShowModal(false)}
+            className={s.cancelButton}
+          >
+            Cancel
+          </button>
         </div>
-      )}
+      </Modal>
     </div>
   );
 };

@@ -1,5 +1,6 @@
-import { FaComments, FaRegCircle, FaUsers, FaCog } from "react-icons/fa";
-import { MdOutlineSpeakerGroup } from "react-icons/md";
+import { FaComments, FaUsers, FaCog } from "react-icons/fa";
+import { AiOutlineFieldTime } from "react-icons/ai";
+import { CiStreamOn } from "react-icons/ci";
 import defaultAvatar from "../../shared/assets/defaultavatar.webp";
 import s from "./Sidebar.module.scss";
 
@@ -11,10 +12,10 @@ const Sidebar = () => {
           <FaComments className={s.icon} />
         </div>
         <div className={s.iconWrapper}>
-          <MdOutlineSpeakerGroup className={s.icon} />
+          <AiOutlineFieldTime className={s.icon} />
         </div>
         <div className={s.iconWrapper}>
-          <FaRegCircle className={s.icon} />
+          <CiStreamOn className={s.icon} />
         </div>
         <div className={s.iconWrapper}>
           <FaUsers className={s.icon} />

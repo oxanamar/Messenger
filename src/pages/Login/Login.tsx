@@ -3,6 +3,8 @@ import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../app/store/store";
 import { setCredentials } from "../../features/auth/authSlice";
 import { useNavigate } from "react-router-dom";
+import Modal from "../../shared/Modal/Modal";
+import s from "./Login.module.scss";
 
 const Login = () => {
   const dispatch = useDispatch();
@@ -11,18 +13,20 @@ const Login = () => {
     (state: RootState) => state.auth
   );
 
-  const [id, setId] = useState(idInstance);
-  const [apiToken, setApiToken] = useState(apiTokenInstance);
+  const [id, setId] = useState(idInstance || "");
+  const [apiToken, setApiToken] = useState(apiTokenInstance || "");
+  const [showModal, setShowModal] = useState(true);
+  const [error, setError] = useState("");
 
   useEffect(() => {
     if (idInstance && apiTokenInstance) {
-      navigate("/chat"); // Redirect if already logged in
+      navigate("/chat");
     }
   }, [idInstance, apiTokenInstance, navigate]);
 
   const handleLogin = () => {
-    if (!id || !apiToken) {
-      alert("Please enter both idInstance and apiTokenInstance");
+    if (!id.trim() || !apiToken.trim()) {
+      setError("Please enter both idInstance and apiTokenInstance");
       return;
     }
 
@@ -34,22 +38,33 @@ const Login = () => {
   };
 
   return (
-    <div>
-      <h2>Login</h2>
-      <input
-        type="text"
-        placeholder="idInstance"
-        value={id}
-        onChange={(e) => setId(e.target.value)}
-      />
-      <input
-        type="text"
-        placeholder="apiTokenInstance"
-        value={apiToken}
-        onChange={(e) => setApiToken(e.target.value)}
-      />
-      <button onClick={handleLogin}>Login</button>
-    </div>
+    <Modal
+      isOpen={showModal}
+      onClose={() => setShowModal(false)}
+      title="Login"
+      hideCloseButton
+    >
+      <div className={s.modalContent}>
+        <input
+          type="text"
+          placeholder="idInstance"
+          value={id}
+          onChange={(e) => setId(e.target.value)}
+          className={s.input}
+        />
+        <input
+          type="text"
+          placeholder="apiTokenInstance"
+          value={apiToken}
+          onChange={(e) => setApiToken(e.target.value)}
+          className={s.input}
+        />
+        {error && <p className={s.error}>{error}</p>}
+        <button onClick={handleLogin} className={s.loginButton}>
+          Login
+        </button>
+      </div>
+    </Modal>
   );
 };
 
