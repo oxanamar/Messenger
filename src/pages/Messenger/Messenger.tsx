@@ -19,7 +19,11 @@ const Messenger = () => {
       </div>
 
       <div className={s.chatArea}>
-        {selectedChat ? <Chat /> : <p>Select a contact to start chatting</p>}
+        {selectedChat ? (
+          <Chat />
+        ) : (
+          <p className={s.noChatMessage}>Select a contact to start chatting</p>
+        )}
       </div>
     </div>
   );

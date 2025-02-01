@@ -10,4 +10,15 @@
 
 .chatArea {
   flex: 1;
+  color: rgb(84, 101, 111);
+  font-size: 18px;
+  font-weight: 500;
+}
+
+.noChatMessage {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  text-align: center;
 }
