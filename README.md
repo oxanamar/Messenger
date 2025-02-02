@@ -115,6 +115,8 @@ npm run dev
 #### Step 4: Open the Messenger App
 Go to http://localhost:5173/ (or the URL shown in your terminal) to start using the Messenger app! 🎉
 
+<br><br>
+
 Thank you for exploring this project! If you find it useful, consider giving it a ⭐️ or suggesting improvements! 🙌🏻
 
 
