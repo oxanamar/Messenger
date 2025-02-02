@@ -64,22 +64,22 @@ This project is a WhatsApp-style chat interface built with React and powered by 
 2. **User Logs In**
    - Enter `idInstance` and `apiTokenInstance` to authenticate.
   
-  <div style="display: flex; justify-content: space-between; align-items: center;">
-   <img width="1016" alt="login" src="https://github.com/user-attachments/assets/a09c80fa-d925-49a9-a2f1-1615dcf0feb4" />
+  <div style="display: flex; justify-content: center;">
+   <img width="400" alt="login" src="https://github.com/user-attachments/assets/a09c80fa-d925-49a9-a2f1-1615dcf0feb4" />
   </div>
 
 3. **Creating a New Chat**
    - Add a **name** and **phone number** to start a chat.
   
-  <div style="display: flex; justify-content: space-between; align-items: center;">
-  <img width="1011" alt="new chat" src="https://github.com/user-attachments/assets/6be4213e-4439-4df0-aaea-2d1e386d7c2a" />
+  <div style="display: flex; justify-content: center;">
+  <img width="400" alt="new chat" src="https://github.com/user-attachments/assets/6be4213e-4439-4df0-aaea-2d1e386d7c2a" />
   </div>
 
 4. **Sending Messages**
    - Messages are sent via **[`SendMessage`](https://green-api.com/docs/api/sending/SendMessage/)** API.
   
-  <div style="display: flex; justify-content: space-between; align-items: center;">
-  <img width="1016" alt="chat" src="https://github.com/user-attachments/assets/e28ba5d0-ba8a-4888-b881-adb1cccbbeb2" />
+  <div style="display: flex; justify-content: center;">
+  <img width="400" alt="chat" src="https://github.com/user-attachments/assets/e28ba5d0-ba8a-4888-b881-adb1cccbbeb2" />
   </div>
 
 5. **Receiving Messages**
