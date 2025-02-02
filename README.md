@@ -54,7 +54,7 @@ You can visit the live site here: [Messenger](https://messenger-xi-red.vercel.ap
 - **Axios:**  
   Used for handling asynchronous HTTP requests to Green API. 
 
-### **Backend API**
+### **Backend**
 
 - **Green API:**  
   A third-party WhatsApp API service that allows developers to integrate WhatsApp messaging functionality into their applications: **[Green API](https://green-api.com/en)**. 
