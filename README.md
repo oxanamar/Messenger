@@ -37,24 +37,24 @@ This project is a WhatsApp-style chat interface built with React and powered by 
   Enables client-side routing and navigation between different pages.
 
 - **React Redux:**  
-  Utilized for state management, providing reactive updates to the application's state.
+  Utilized for centralized state management, ensuring data consistency across components.
 
 - **TypeScript:**  
-  Type safety.
+  Enhances code quality and maintainability by enforcing static typing. 
 
 - **SCSS Modules:**  
-  Styling.
+  Enables modular and maintainable styling by scoping styles to individual components, preventing conflicts in larger projects. 
 
 - **React Icons:**  
   Integrated for adding scalable vector icons to enhance the UI.
 
 - **Axios:**  
-  API requests.
+  Used for handling asynchronous HTTP requests to Green API. 
 
 ### **Backend API**
 
 - **Green API:**  
-  WhatsApp API service: https://green-api.com/en
+  A third-party WhatsApp API service that allows developers to integrate WhatsApp messaging functionality into their applications: **[Green API](https://green-api.com/en)**. 
 
 ## 🔄 How It Works
 1. **User Registers on Green API**
@@ -76,14 +76,14 @@ This project is a WhatsApp-style chat interface built with React and powered by 
   </div>
 
 4. **Sending Messages**
-   - Messages are sent via **[`SendMessage`](https://green-api.com/docs/api/sending/SendMessage/)** API.
+   - Messages are sent via **[`SendMessage`](https://green-api.com/en/docs/api/sending/SendMessage/)** API.
   
   <div style="display: flex; justify-content: center;">
   <img width="400" alt="chat" src="https://github.com/user-attachments/assets/e28ba5d0-ba8a-4888-b881-adb1cccbbeb2" />
   </div>
 
 5. **Receiving Messages**
-   - Incoming messages are retrieved using **[`receiveNotification`](https://green-api.com/docs/api/receiving/technology-http-api/)**.
+   - Incoming messages are retrieved using **[`receiveNotification`](https://green-api.com/en/docs/api/receiving/technology-http-api/ReceiveNotification/)**.
 
 
 
