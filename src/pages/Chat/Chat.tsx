@@ -7,7 +7,7 @@ import defaultAvatar from "../../shared/assets/defaultavatar.webp";
 import s from "./Chat.module.scss";
 import { FaPlus, FaMicrophone, FaSearch, FaEllipsisV } from "react-icons/fa";
 
-// ✅ Configure Green API for receiving messages
+// Configure Green API for receiving messages
 const configureGreenAPI = async (
   idInstance: string,
   apiTokenInstance: string
@@ -23,9 +23,9 @@ const configureGreenAPI = async (
 
   try {
     const response = await axios.post(url, settingsData);
-    console.log("✅ Green API configured:", response.data);
+    console.log("Green API configured:", response.data);
   } catch (error) {
-    console.error("❌ Error configuring Green API:", error);
+    console.error("Error configuring Green API:", error);
   }
 };
 
@@ -43,19 +43,19 @@ const Chat = () => {
   const dispatch = useDispatch();
   const [message, setMessage] = useState("");
 
-  // ✅ Get Contact Name or Show Number
+  // Get Contact Name or Show Number
   const contactInfo = contacts.find((c) => c.phoneNumber === selectedChat);
   const contactName = contactInfo ? contactInfo.name : selectedChat;
 
-  // ✅ Send message when "Enter" is pressed
+  // Send message when "Enter" is pressed
   const handleKeyPress = (event: React.KeyboardEvent<HTMLInputElement>) => {
     if (event.key === "Enter") {
-      event.preventDefault(); // ✅ Prevents adding a newline
+      event.preventDefault();
       sendMessage();
     }
   };
 
-  // ✅ Send a message
+  // Send a message
   const sendMessage = async () => {
     console.log("Selected chat before sending message:", selectedChat);
 
@@ -89,24 +89,24 @@ const Chat = () => {
       );
       setMessage("");
     } catch (error) {
-      console.error("❌ Error sending message:", error);
+      console.error("Error sending message:", error);
     }
   };
 
-  // ✅ Receive messages
+  // Receive messages
   const receiveMessages = async () => {
     const url = `https://api.green-api.com/waInstance${idInstance}/receiveNotification/${apiTokenInstance}`;
 
     try {
       const response = await axios.get(url);
-      console.log("📥 FULL Green API Response:", response.data); // Debugging log
+      console.log("FULL Green API Response:", response.data);
 
       if (!response.data || !response.data.body) {
-        console.log("❌ No new messages received");
+        console.log("No new messages received");
         return;
       }
 
-      // ✅ Extract message data correctly
+      // Extract message data
       const messageData = response.data.body.messageData;
       const textMessage = messageData?.textMessageData?.textMessage;
       const senderNumber = response.data.body.senderData?.chatId?.replace(
@@ -114,10 +114,10 @@ const Chat = () => {
         ""
       );
 
-      console.log("📩 Extracted Message:", textMessage);
-      console.log("📩 Sender Number:", senderNumber);
+      console.log("Extracted Message:", textMessage);
+      console.log("Sender Number:", senderNumber);
 
-      // ✅ Determine if the message is sent by the current user (you) or received
+      // Determine if the message is sent by current user or received
       const isSentByMe = senderNumber === idInstance;
 
       if (textMessage && senderNumber) {
@@ -137,16 +137,16 @@ const Chat = () => {
         );
       }
 
-      // ✅ Delete notification after processing
+      // Delete notification after processing
       if (response.data.receiptId) {
         await deleteNotification(response.data.receiptId);
       }
     } catch (error) {
-      console.error("❌ Error receiving message:", error);
+      console.error("Error receiving message:", error);
     }
   };
 
-  // ✅ Delete processed messages from Green API
+  // Delete processed messages from Green API
   const deleteNotification = async (receiptId: string) => {
     if (!receiptId) {
       console.warn("⚠️ No receiptId provided for deletion");
@@ -157,26 +157,26 @@ const Chat = () => {
 
     try {
       await axios.delete(url);
-      console.log(`🗑️ Deleted notification with receiptId: ${receiptId}`);
+      console.log(`Deleted notification with receiptId: ${receiptId}`);
     } catch (error) {
-      console.error("❌ Error deleting notification:", error);
+      console.error("Error deleting notification:", error);
     }
   };
 
-  // ✅ Configure Green API and start fetching messages
+  // Configure Green API and start fetching messages
   useEffect(() => {
     if (idInstance && apiTokenInstance) {
       configureGreenAPI(idInstance, apiTokenInstance);
     }
   }, [idInstance, apiTokenInstance]);
 
-  // ✅ Continuously check for new messages
+  // Continuously check for new messages
   useEffect(() => {
     const fetchMessages = async () => {
       await receiveMessages();
     };
 
-    fetchMessages(); // ✅ Fetch immediately when chat is selected
+    fetchMessages();
 
     const interval = setInterval(fetchMessages, 5000);
     return () => clearInterval(interval);

@@ -18,7 +18,6 @@ const authSlice = createSlice({
       state.idInstance = action.payload.idInstance;
       state.apiTokenInstance = action.payload.apiTokenInstance;
     },
-    // ✅ Fix: Ensure "clearAuth" exists
     clearAuth: (state) => {
       state.idInstance = "";
       state.apiTokenInstance = "";

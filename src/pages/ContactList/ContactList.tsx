@@ -56,7 +56,7 @@ const ContactList = () => {
     setShowModal(false);
   };
 
-  // ✅ Close menu when clicking outside
+  // Close menu when clicking outside
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
@@ -79,12 +79,16 @@ const ContactList = () => {
       <div className={s.header}>
         <h3>Chats</h3>
         <div className={s.menu}>
-          <FaPlus className={s.icon} onClick={() => setShowModal(true)} />
+          <div className={s.iconWrapper} onClick={() => setShowModal(true)}>
+            <FaPlus className={s.icon} />
+          </div>
 
-          <FaEllipsisV
-            className={s.icon}
+          <div
+            className={s.iconWrapper}
             onClick={() => setShowMenu((prev) => !prev)}
-          />
+          >
+            <FaEllipsisV className={s.icon} />
+          </div>
 
           {/* Dropdown Menu */}
           {showMenu && (
@@ -123,7 +127,7 @@ const ContactList = () => {
         ))}
       </div>
 
-      {/* Add Contact Modal */}
+      {/* Contact Modal */}
       <Modal
         isOpen={showModal}
         onClose={() => setShowModal(false)}

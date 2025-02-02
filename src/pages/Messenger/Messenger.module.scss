@@ -5,12 +5,12 @@
 
 .contactList {
   width: 30%;
-  border-right: 1px solid rgb(233, 237, 239);
+  border-right: 1px solid var(--border-soft-gray);
 }
 
 .chatArea {
   flex: 1;
-  color: rgb(84, 101, 111);
+  color: var(--color-slate-gray);
   font-size: 18px;
   font-weight: 500;
 }
@@ -21,4 +21,5 @@
   align-items: center;
   height: 100%;
   text-align: center;
+  background-color: var(--color-soft-gray);
 }

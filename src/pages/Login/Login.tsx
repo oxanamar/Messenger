@@ -37,30 +37,32 @@ const Login = () => {
   };
 
   return (
-    <Modal
-      isOpen={showModal}
-      onClose={() => setShowModal(false)}
-      title="Login"
-      closable={false}
-    >
-      <input
-        type="text"
-        placeholder="idInstance"
-        value={id}
-        onChange={(e) => setId(e.target.value)}
-        className={s.input}
-      />
-      <input
-        type="text"
-        placeholder="apiTokenInstance"
-        value={apiToken}
-        onChange={(e) => setApiToken(e.target.value)}
-        className={s.input}
-      />
-      <button onClick={handleLogin} className={s.loginButton}>
-        Login
-      </button>
-    </Modal>
+    <div className={s.loginPage}>
+      <Modal
+        isOpen={showModal}
+        onClose={() => setShowModal(false)}
+        title="Login"
+        closable={false}
+      >
+        <input
+          type="text"
+          placeholder="idInstance"
+          value={id}
+          onChange={(e) => setId(e.target.value)}
+          className={s.input}
+        />
+        <input
+          type="text"
+          placeholder="apiTokenInstance"
+          value={apiToken}
+          onChange={(e) => setApiToken(e.target.value)}
+          className={s.input}
+        />
+        <button onClick={handleLogin} className={s.loginButton}>
+          Login
+        </button>
+      </Modal>
+    </div>
   );
 };
 

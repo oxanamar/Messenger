@@ -1,7 +1,38 @@
 :root {
+  /* Font */
+  --font-primary: "Roboto", sans-serif;
+
   /* Sets of colors */
+  --color-blue: #007bff;
+  --color-dark-blue: #0056b3;
+  --color-soft-white: #fafafa;
   --color-white: #fff;
-  --color-gray: rgb(240, 242, 245);
+  --color-gray: #ccc;
+  --color-dark-gray: gray;
+  --color-light-gray: #f8f9fa;
+  --color-medium-gray: #e0e0e0;
+  --color-deep-gray: rgb(59, 74, 84);
+  --color-slate-gray: rgb(84, 101, 111);
+  --color-soft-gray: rgb(240, 242, 245);
   --color-gray-message: #eaeaea;
   --color-green-message: #dcf8c6;
+  --border-soft-gray: rgb(233, 237, 239);
+
+  /* Hover Colors */
+  --hover-light-gray: rgba(0, 0, 0, 0.1);
+  --hover-medium-gray: rgba(0, 0, 0, 0.15);
+  --hover-dark-gray: rgba(0, 0, 0, 0.2);
+
+  /* Gradient Colors */
+  --color-light-blue: #b0e0e6;
+  --color-medium-blue: #6495ed;
+  --color-soft-purple: #6a5acd;
+
+  /* Background Gradients */
+  --gradient-blue-purple: linear-gradient(
+    135deg,
+    var(--color-light-blue),
+    var(--color-medium-blue),
+    var(--color-soft-purple)
+  );
 }

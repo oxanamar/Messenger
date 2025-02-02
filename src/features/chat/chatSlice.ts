@@ -13,18 +13,9 @@ interface Message {
 
 interface ChatState {
   contacts: Contact[];
-  selectedChat: string | null; // Selected contact
-  messages: Record<string, Message[]>; // Messages grouped by contact
+  selectedChat: string | null;
+  messages: Record<string, Message[]>;
 }
-
-// const initialState: ChatState = {
-//   contacts: [
-//     { name: "John Doe", phoneNumber: "77071112233" },
-//     { name: "Jane Smith", phoneNumber: "1234567890" },
-//   ], // Example contacts
-//   selectedChat: null,
-//   messages: {},
-// };
 
 const loadFromLocalStorage = (key: string) => {
   try {
@@ -48,7 +39,7 @@ const chatSlice = createSlice({
   reducers: {
     addContact: (state, action: PayloadAction<Contact>) => {
       state.contacts.push(action.payload);
-      localStorage.setItem("contacts", JSON.stringify(state.contacts)); // ✅ Save contacts
+      localStorage.setItem("contacts", JSON.stringify(state.contacts));
     },
     selectChat: (state, action: PayloadAction<string>) => {
       state.selectedChat = action.payload;
@@ -61,7 +52,7 @@ const chatSlice = createSlice({
         state.messages[action.payload.contact] = [];
       }
       state.messages[action.payload.contact].push(action.payload.message);
-      localStorage.setItem("messages", JSON.stringify(state.messages)); // ✅ Save messages
+      localStorage.setItem("messages", JSON.stringify(state.messages));
     },
   },
 });

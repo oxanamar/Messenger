@@ -6,8 +6,8 @@
   justify-content: space-between;
   align-items: center;
   padding: 10px 0;
-  background-color: var(--color-gray);
-  border-right: 1px solid #ccc;
+  background-color: var(--color-soft-gray);
+  border-right: 1px solid var(--color-gray);
 }
 
 .icons {
@@ -30,12 +30,12 @@
 }
 
 .iconWrapper:hover {
-  background-color: rgba(0, 0, 0, 0.1);
+  background-color: var(--hover-light-gray);
 }
 
 .icon {
   font-size: 1.4rem;
-  color: rgb(84, 101, 111);
+  color: var(--color-slate-gray);
 }
 
 .bottomSection {
