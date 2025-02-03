@@ -1,6 +1,6 @@
 import { useSelector, useDispatch } from "react-redux";
 import { RootState } from "../../app/store/store";
-import { addContact, selectChat } from "../../features/chat/chatSlice";
+import { addContact, selectChat, Contact } from "../../features/chat/chatSlice";
 import { useEffect, useRef, useState } from "react";
 import { clearAuth } from "../../features/auth/authSlice";
 import { useNavigate } from "react-router-dom";
@@ -8,15 +8,13 @@ import defaultAvatar from "../../shared/assets/defaultavatar.webp";
 import { FaSearch, FaEllipsisV, FaPlus } from "react-icons/fa";
 import s from "./ContactList.module.scss";
 import Modal from "../../shared/Modal/Modal";
-
-interface Contact {
-  name: string;
-  phoneNumber: string;
-}
+import axios from "axios";
 
 const ContactList = () => {
   const contacts = useSelector((state: RootState) => state.chat.contacts);
-
+  const { idInstance, apiTokenInstance } = useSelector(
+    (state: RootState) => state.auth
+  );
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
@@ -29,12 +27,34 @@ const ContactList = () => {
   const menuRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
-    setFilteredContacts(
-      contacts.filter((contact) =>
-        contact.name.toLowerCase().includes(searchTerm.toLowerCase())
-      )
-    );
-  }, [searchTerm, contacts]);
+    const fetchAvatars = async () => {
+      const updatedContacts = await Promise.all(
+        contacts.map(async (contact) => {
+          const avatarUrl = await fetchAvatar(`${contact.phoneNumber}@c.us`);
+          return { ...contact, avatarUrl };
+        })
+      );
+      setFilteredContacts(updatedContacts);
+    };
+
+    fetchAvatars();
+  }, [contacts]);
+
+  const fetchAvatar = async (chatId: string) => {
+    try {
+      const url = `https://api.green-api.com/waInstance${idInstance}/getAvatar/${apiTokenInstance}`;
+      const response = await axios.post(url, { chatId });
+
+      if (response.data.available) {
+        return response.data.urlAvatar || defaultAvatar;
+      } else {
+        return defaultAvatar;
+      }
+    } catch (error) {
+      console.error("Error fetching avatar:", error);
+      return defaultAvatar;
+    }
+  };
 
   // Logout function
   const handleLogout = () => {
@@ -121,7 +141,11 @@ const ContactList = () => {
             className={s.contactItem}
             onClick={() => dispatch(selectChat(contact.phoneNumber))}
           >
-            <img src={defaultAvatar} alt="Avatar" className={s.avatar} />
+            <img
+              src={contact.avatarUrl || defaultAvatar}
+              alt="Avatar"
+              className={s.avatar}
+            />
             <span>{contact.name}</span>
           </div>
         ))}
