@@ -7,7 +7,7 @@ import defaultAvatar from "../../shared/assets/defaultavatar.webp";
 import s from "./Chat.module.scss";
 import { FaPlus, FaMicrophone, FaSearch, FaEllipsisV } from "react-icons/fa";
 
-// Configure Green API for receiving messages
+// Receiving messages
 const configureGreenAPI = async (
   idInstance: string,
   apiTokenInstance: string
@@ -42,6 +42,36 @@ const Chat = () => {
   );
   const dispatch = useDispatch();
   const [message, setMessage] = useState("");
+  const [avatarUrl, setAvatarUrl] = useState<string>(defaultAvatar);
+
+  // Fetch Avatar Function
+  const fetchAvatar = async (chatId: string) => {
+    try {
+      const url = `https://api.green-api.com/waInstance${idInstance}/getAvatar/${apiTokenInstance}`;
+      const response = await axios.post(url, { chatId });
+
+      if (response.data.available) {
+        return response.data.urlAvatar || defaultAvatar;
+      } else {
+        return defaultAvatar;
+      }
+    } catch (error) {
+      console.error("Error fetching avatar:", error);
+      return defaultAvatar;
+    }
+  };
+
+  // Load Avatar When Chat Changes
+  useEffect(() => {
+    const loadAvatar = async () => {
+      if (selectedChat) {
+        const fetchedAvatar = await fetchAvatar(`${selectedChat}@c.us`);
+        setAvatarUrl(fetchedAvatar);
+      }
+    };
+
+    loadAvatar();
+  }, [selectedChat, idInstance, apiTokenInstance]);
 
   // Get Contact Name or Show Number
   const contactInfo = contacts.find((c) => c.phoneNumber === selectedChat);
@@ -186,7 +216,7 @@ const Chat = () => {
     <div className={s.chatContainer}>
       <div className={s.chatHeader}>
         <div className={s.userInfo}>
-          <img src={defaultAvatar} alt="Avatar" />
+          <img src={avatarUrl} alt="Avatar" />
           <h3>{contactName}</h3>
         </div>
 
