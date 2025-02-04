@@ -29,6 +29,9 @@ You can visit the live site here: [Messenger](https://messenger-xi-red.vercel.ap
 - **Contact Management**:
   Users can add new contacts by entering a phone number.
 
+- **Fetching Avatars**:
+  Retrieves and displays contact avatars.
+
 ## 🛠️ Tech Stack
 
 ### **Frontend**
