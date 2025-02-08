@@ -29,6 +29,9 @@ You can visit the live site here: [Messenger](https://messenger-xi-red.vercel.ap
 - **Contact Management**:
   Users can add new contacts by entering a phone number.
 
+- **Fetching Avatars**:
+  Retrieves and displays contact avatars.
+
 ## 🛠️ Tech Stack
 
 ### **Frontend**
@@ -75,14 +78,15 @@ You can visit the live site here: [Messenger](https://messenger-xi-red.vercel.ap
    - Add a **name** and **phone number** to start a chat.
   
   <div style="display: flex; justify-content: center;">
-  <img width="400" alt="new chat" src="https://github.com/user-attachments/assets/6be4213e-4439-4df0-aaea-2d1e386d7c2a" />
+  <img width="400" alt="add contact" src="https://github.com/user-attachments/assets/8a39eeeb-209f-4666-9189-cccd00257455" />
+
   </div>
 
 4. **Sending Messages**
    - Messages are sent via **[`SendMessage`](https://green-api.com/en/docs/api/sending/SendMessage/)** API.
   
   <div style="display: flex; justify-content: center;">
-  <img width="400" alt="chat" src="https://github.com/user-attachments/assets/e28ba5d0-ba8a-4888-b881-adb1cccbbeb2" />
+  <img width="400" alt="start chat" src="https://github.com/user-attachments/assets/d6502461-38dc-4512-99b3-a8deb8f97034" />
   </div>
 
 5. **Receiving Messages**
