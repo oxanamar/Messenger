@@ -1,6 +1,10 @@
 import { useSelector, useDispatch } from "react-redux";
 import { RootState } from "../../app/store/store";
-import { addContact, selectChat, Contact } from "../../features/chat/chatSlice";
+import {
+  addContact,
+  selectChat,
+  updateContactAvatar,
+} from "../../features/chat/chatSlice";
 import { useEffect, useRef, useState } from "react";
 import { clearAuth } from "../../features/auth/authSlice";
 import { useNavigate } from "react-router-dom";
@@ -19,26 +23,11 @@ const ContactList = () => {
   const navigate = useNavigate();
 
   const [searchTerm, setSearchTerm] = useState("");
-  const [filteredContacts, setFilteredContacts] = useState<Contact[]>(contacts);
   const [showModal, setShowModal] = useState(false);
   const [showMenu, setShowMenu] = useState(false);
   const [name, setName] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
   const menuRef = useRef<HTMLDivElement | null>(null);
-
-  useEffect(() => {
-    const fetchAvatars = async () => {
-      const updatedContacts = await Promise.all(
-        contacts.map(async (contact) => {
-          const avatarUrl = await fetchAvatar(`${contact.phoneNumber}@c.us`);
-          return { ...contact, avatarUrl };
-        })
-      );
-      setFilteredContacts(updatedContacts);
-    };
-
-    fetchAvatars();
-  }, [contacts]);
 
   const fetchAvatar = async (chatId: string) => {
     try {
@@ -55,6 +44,37 @@ const ContactList = () => {
       return defaultAvatar;
     }
   };
+
+  // Load avatars and update Redux store
+  useEffect(() => {
+    const fetchAvatars = async () => {
+      const updatedContacts = await Promise.all(
+        contacts.map(async (contact) => {
+          if (!contact.avatarUrl || contact.avatarUrl === defaultAvatar) {
+            const avatarUrl = await fetchAvatar(`${contact.phoneNumber}@c.us`);
+            return { ...contact, avatarUrl };
+          }
+          return contact;
+        })
+      );
+
+      updatedContacts.forEach((contact) => {
+        dispatch(
+          updateContactAvatar({
+            phoneNumber: contact.phoneNumber,
+            avatarUrl: contact.avatarUrl!,
+          })
+        );
+      });
+    };
+
+    fetchAvatars();
+  }, [contacts, dispatch]);
+
+  // Filter contacts based on search
+  const filteredContacts = contacts.filter((contact) =>
+    contact.name.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
   // Logout function
   const handleLogout = () => {

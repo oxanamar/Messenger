@@ -55,8 +55,21 @@ const chatSlice = createSlice({
       state.messages[action.payload.contact].push(action.payload.message);
       localStorage.setItem("messages", JSON.stringify(state.messages));
     },
+    updateContactAvatar: (
+      state,
+      action: PayloadAction<{ phoneNumber: string; avatarUrl: string }>
+    ) => {
+      const contact = state.contacts.find(
+        (c) => c.phoneNumber === action.payload.phoneNumber
+      );
+      if (contact) {
+        contact.avatarUrl = action.payload.avatarUrl;
+        localStorage.setItem("contacts", JSON.stringify(state.contacts));
+      }
+    },
   },
 });
 
-export const { addContact, selectChat, addMessage } = chatSlice.actions;
+export const { addContact, selectChat, addMessage, updateContactAvatar } =
+  chatSlice.actions;
 export default chatSlice.reducer;
